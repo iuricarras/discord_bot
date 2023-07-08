@@ -177,8 +177,3 @@ class Music(commands.Cog):
             else:
                 await ctx.send("You are not connected to a voice channel.")
                 raise commands.CommandError("Author not connected to a voice channel.")
-
-
-
-
-
