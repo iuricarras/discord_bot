@@ -13,8 +13,8 @@ handler = logging.FileHandler(filename='discord_log.log', encoding='utf-8', mode
 
 intents = discord.Intents.all()
 
-#perms = discord.Permlowerissions.general()
-#perms.manage_channels = True
+perms = discord.Permlowerissions.general()
+perms.manage_channels = True
 
 #client = discord.Client(intents = intents)
 

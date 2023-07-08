@@ -114,7 +114,7 @@ class Music(commands.Cog):
             ctx.voice_state.voice.resume()
             await ctx.message.add_reaction('⏯')
 
-    @commands.command(name='stop')
+    @commands.command(name='stop', aliases=['morre', 'fodete', 'fode-te', 'pokaralo', 'baza', 'falece'])
     @commands.has_permissions(manage_guild=True)
     async def _stop(self, ctx: commands.Context):
         """Stops playing song and clears the queue."""
@@ -125,7 +125,7 @@ class Music(commands.Cog):
             ctx.voice_state.voice.stop()
             await ctx.message.add_reaction('⏹')
 
-    @commands.command(name='skip')
+    @commands.command(name='skip', aliases=['passa'])
     async def _skip(self, ctx: commands.Context):
         """Vote to skip a song. The requester can automatically skip.
         3 skip votes are needed for the song to be skipped.
@@ -212,39 +212,24 @@ class Music(commands.Cog):
 
         async with ctx.typing():
             try:
-                source = await YTDLSource.create_source(ctx, search, loop=self.bot.loop)
+                source = await YTDLSource.create_source(ctx, search, loop=self.bot.loop, is_radio=False)
             except YTDLError as e:
                 await ctx.send('An error occurred while processing this request: {}'.format(str(e)))
             else:
-                song = Song(source)
+                song = Song(source, False)
 
                 await ctx.voice_state.songs.put(song)
                 await ctx.send('Enqueued {}'.format(str(source)))
 
     @commands.command()
     async def radio(self, ctx, *, name):
-        """Radios"""
-        radios = {"m80": "http://stream-icy.bauermedia.pt/m80.mp3",
-                  "m80portugal": "https://stream-icy.bauermedia.pt/m80nacional.aac",
-                  "m80rock": "https://stream-icy.bauermedia.pt/m80rock.aac"}
-        radios_full = {"m80": "Rádio M80",
-                  "m80portugal": "Rádio M80 Nacional",
-                  "m80rock": "Rádio M80 Rock"}
-
-        radio_name = name.lower()
-        radio = radios.get(radio_name)
-        if radio == None:
-            await ctx.send('Radio não encontrada')
-        else:
-            if not ctx.voice_state.voice:
-                await ctx.invoke(self._join)
-            async with ctx.typing():
-                song = Song(discord.FFmpegPCMAudio(executable="ffmpeg", source=radio))
-                await ctx.voice_state.songs.put(song)
-                #await ctx.send('Enqueued {}'.format(str(source)))
-                """streaming = discord.Streaming(name=radios_full.get(radio_name), url="https://www.youtube.com/watch?v=dQw4w9WgXcQ&pp=ygUTcmljayBhc3RsZXkgZ2l2ZSB1cA%3D%3D")
-                await self.bot.change_presence(activity=streaming)
-                await ctx.send(f'A curtir batidão: {radios_full.get(radio_name)}')"""
+        if not ctx.voice_state.voice:
+            await ctx.invoke(self._join)
+        async with ctx.typing():
+            source = await YTDLSource.create_source(ctx, name, loop=self.bot.loop, is_radio=True)
+            song = Song(source, True)
+            await ctx.voice_state.songs.put(song)
+            await ctx.send('Enqueued {}'.format(str(source)))
 
 
     @_join.before_invoke

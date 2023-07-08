@@ -55,7 +55,7 @@ class VoiceState:
                 # the player will disconnect due to performance
                 # reasons.
                 try:
-                    async with timeout(30):  # 3 minutes
+                    async with timeout(180):  # 3 minutes
                         print("DEGUB - Looking for songs")
                         self.current = await self.songs.get()
                         print("DEGUB - Song found")
