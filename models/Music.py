@@ -11,6 +11,7 @@ class Music(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
         self.voice_states = {}
+        self.anv = False
 
     def get_voice_state(self, ctx: commands.Context):
         state = self.voice_states.get(ctx.guild.id)
@@ -67,7 +68,6 @@ class Music(commands.Cog):
         ctx.voice_state.voice = await destination.connect()
 
     @commands.command(name='leave', aliases=['disconnect'])
-    @commands.has_permissions(manage_guild=True)
     async def _leave(self, ctx: commands.Context):
         """Clears the queue and leaves the voice channel."""
 
@@ -106,7 +106,6 @@ class Music(commands.Cog):
             await ctx.message.add_reaction('⏯')
 
     @commands.command(name='resume')
-    @commands.has_permissions(manage_guild=True)
     async def _resume(self, ctx: commands.Context):
         """Resumes a currently paused song."""
 
@@ -115,7 +114,6 @@ class Music(commands.Cog):
             await ctx.message.add_reaction('⏯')
 
     @commands.command(name='stop', aliases=['morre', 'fodete', 'fode-te', 'pokaralo', 'baza', 'falece'])
-    @commands.has_permissions(manage_guild=True)
     async def _stop(self, ctx: commands.Context):
         """Stops playing song and clears the queue."""
 
@@ -123,7 +121,9 @@ class Music(commands.Cog):
 
         if ctx.voice_state.is_playing:
             ctx.voice_state.voice.stop()
-            await ctx.message.add_reaction('⏹')
+            await ctx.voice_state.stop()
+            del self.voice_states[ctx.guild.id]
+            await ctx.message.add_reaction('💀')
 
     @commands.command(name='skip', aliases=['passa'])
     async def _skip(self, ctx: commands.Context):
@@ -136,7 +136,7 @@ class Music(commands.Cog):
 
         voter = ctx.message.author
         if voter == ctx.voice_state.current.requester:
-            await ctx.message.add_reaction('⏭')
+            await ctx.message.add_reaction('🚬')
             ctx.voice_state.skip()
 
         elif voter.id not in ctx.voice_state.skip_votes:
@@ -144,7 +144,7 @@ class Music(commands.Cog):
             total_votes = len(ctx.voice_state.skip_votes)
 
             if total_votes >= 3:
-                await ctx.message.add_reaction('⏭')
+                await ctx.message.add_reaction('🚬')
                 ctx.voice_state.skip()
             else:
                 await ctx.send('Skip vote added, currently at **{}/3**'.format(total_votes))
@@ -197,7 +197,7 @@ class Music(commands.Cog):
         await ctx.message.add_reaction('✅')
 
     @commands.command(name='play', aliases=['mete', 'toca'])
-    async def _play(self, ctx: commands.Context, *, search: str):
+    async def _play(self, ctx: commands.Context, *, search: str = None):
         """Plays a song.
 
         If there are songs in the queue, this will be queued until the
@@ -206,20 +206,35 @@ class Music(commands.Cog):
         This command automatically searches from various sites if no URL is provided.
         A list of these sites can be found here: https://rg3.github.io/youtube-dl/supportedsites.html
         """
+        if not self.anv:
+            if len(ctx.message.attachments) > 0 or search[:26] == "https://cdn.discordapp.com":
+                if not ctx.voice_state.voice:
+                    await ctx.invoke(self._join)
 
-        if not ctx.voice_state.voice:
-            await ctx.invoke(self._join)
+                try:
+                    url = search if len(ctx.message.attachments) == 0 else ctx.message.attachments[0].url
+                    source = await YTDLSource.create_source(ctx, url, loop=self.bot.loop, is_radio=False, is_file=True)
+                except YTDLError as e:
+                    await ctx.send('An error occurred while processing this request: {}'.format(str(e)))
+                else:
+                    song = Song(source, False, True)
 
-        async with ctx.typing():
-            try:
-                source = await YTDLSource.create_source(ctx, search, loop=self.bot.loop, is_radio=False)
-            except YTDLError as e:
-                await ctx.send('An error occurred while processing this request: {}'.format(str(e)))
+                    await ctx.voice_state.songs.put(song)
+                    await ctx.send('No **cu** da bicha {}'.format(str(source)))
             else:
-                song = Song(source, False)
+                if not ctx.voice_state.voice:
+                    await ctx.invoke(self._join)
 
-                await ctx.voice_state.songs.put(song)
-                await ctx.send('Enqueued {}'.format(str(source)))
+                async with ctx.typing():
+                    try:
+                        source = await YTDLSource.create_source(ctx, search, loop=self.bot.loop, is_radio=False)
+                    except YTDLError as e:
+                        await ctx.send('An error occurred while processing this request: {}'.format(str(e)))
+                    else:
+                        song = Song(source, False, False)
+
+                        await ctx.voice_state.songs.put(song)
+                        await ctx.send('No **cu** da bicha {}'.format(str(source)))
 
     @commands.command()
     async def radio(self, ctx, *, name):
@@ -227,9 +242,9 @@ class Music(commands.Cog):
             await ctx.invoke(self._join)
         async with ctx.typing():
             source = await YTDLSource.create_source(ctx, name, loop=self.bot.loop, is_radio=True)
-            song = Song(source, True)
+            song = Song(source, True, False)
             await ctx.voice_state.songs.put(song)
-            await ctx.send('Enqueued {}'.format(str(source)))
+            await ctx.send('No **cu** da bicha {}'.format(str(source)))
 
 
     @_join.before_invoke

@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 from unidecode import unidecode
+from models.Citation import Citation
 from models.Music import Music
 from dotenv import load_dotenv
 import os
@@ -19,6 +20,7 @@ class Bot(commands.Bot):
     def __init__(self, command_prefix, description, intents):
         super().__init__(command_prefix, description=description, intents=intents)
         self.music = None
+        self.citaton = None
         load_dotenv()
 
         self._discordtoken = os.getenv("discord_token")
@@ -32,12 +34,15 @@ class Bot(commands.Bot):
         iuriRole = server.get_role(476152428161662993)
         sala = server.get_channel(1079476335841378395)
         CdTP = server.get_channel(538134492838363171)
+        self.citaton.add_channel(server)
         print(f'Logged in as:\n{self.user.name}\n{self.user.id}')
 
 
     async def add_cog(self) :
         self.music = Music(self)
-        return await super().add_cog(self.music)
+        self.citaton = Citation(self)
+        await super().add_cog(self.music)
+        await super().add_cog(self.citaton)
     
     async def start(self):
         return await super().start(self._discordtoken)
@@ -92,12 +97,12 @@ class Bot(commands.Bot):
         elif self.ativacaoOndeEstaOIuri(mnsg):
             await message.channel.send(self.ondeEstaOIuri(message))
         elif re.search("sabias que", mnsg, re.IGNORECASE):
+           # await message.channel.send("Olá damas, cavalheiros e Iuri :nauseated_face:. Sejam bem-vindos à entrada da maravilhosa casa das citações. Quando disserem ou ouvirem dizer algo engraçado, mesmo muito engraçado ou até mesmo engraçadeco podem pôr aqui.\nDeixem-me exemplificar:\n```Contexto (opcional)\n\"Mensagem muito engraçada\" - @PessoaEngraçadaQueDisseAquilo 2023\n\"Resposta engraçada à mensagem engraçada\" - @OutraPessoaEngraçada 2023\n```\nÉ favor usarem os @ e escreverem como deve ser.\nPodem posteriormente colher o que semearam com uma simples mensagem na #casa-da-tua-prima `ola bot cita [@pessoa se quiserem especificar]`\nObrigado e volte sempre. São 5€ ")
             await message.channel.send(self.stringFixe())
         elif re.search("O LOL", mnsg) or re.search("A LOL", mnsg):
             await message.channel.send(self.lolPasta())
         elif re.search("culpa", message.content, re.IGNORECASE):
             await message.channel.send(self.aCulpa(message.content))
-
     
     def menciona(self, message, anv):
         val = 0
@@ -117,7 +122,9 @@ class Bot(commands.Bot):
                time.strptime("16 06", "%d %m"): 210832481316765706, #Fábio
                time.strptime("17 07", "%d %m"): 1064133004496216064, #Rodrigo
                time.strptime("19 08", "%d %m"): 464176034627977216, #Dias
-               time.strptime("14 11", "%d %m"): 210831222677438465 # #Iuri
+               time.strptime("14 11", "%d %m"): 210831222677438465, #Iuri
+               time.strptime("12 02", "%d %m"): 365586199231987722, #Braulio
+               time.strptime("22 11", "%d %m"): 753284184818188309  #Claudia
                #time.strptime("12 03", "%d %m"): 601454336245235712 #Yuwi UwU
                #time.strptime("12 03", "%d %m"): 1081282162562703542 #Bot
                }
@@ -132,6 +139,7 @@ class Bot(commands.Bot):
         return aniversariante
 
     async def anus(self, anv, men, message):
+        global server
         if anv == 1081282162562703542:
             if men == 2:
                 await message.channel.send("SIM! EU! O GLORIOSO BOT SEM O IURI NASCI HÁ PRECISAMENTE *N* ANO(S)")
@@ -144,6 +152,18 @@ class Bot(commands.Bot):
             else:
                 await message.channel.send(f"Gajo errado, menciona este: <@{anv}>\n\n\n\n||Já agora <@{anv}>, PARABÉNS!||")
 
+            channel = server.get_member(anv).voice.channel
+            if not self.music.voice_states and channel:
+                self.music.anv = True
+                voice = await channel.connect()
+                i = r.randint(1,2)
+                duration = [60, 20]
+                music = "/home/anna/sites/discord/assets/audio/music_anv_" + str(i) + ".mp3"
+                source = discord.PCMVolumeTransformer(discord.FFmpegPCMAudio(music))
+                voice.play(source)
+                await asyncio.sleep(duration[i-1])
+                await voice.disconnect()
+                self.music.anv = False
 
     def stringFixe(self):
         return ':flag_jp:\n                                                                       )\\_\\_\\_(\n                                                           \\_\\_\\_\\_\\_/\\_\\_/\\_\n                                                         /========= |\n                                -{]\\_\\_\\_\\_\\_\\_\\_\\_/\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_|\\_\\_\\_\\_\\_\\_[}-\n  \\_\\_-{]\\_\\_\\_\\_\\_-{]\\_\\_/\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\\\\_\\_\\_[}-\\_\\_\\_\n  \\           Sabias que os Japoneses são maioritariamente            |\n    \\                               ~:sparkles:~***Light Cruisers***~:sparkles:~                             /\n\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\n'

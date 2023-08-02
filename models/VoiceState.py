@@ -1,6 +1,7 @@
 import asyncio
 from async_timeout import timeout
 from discord.ext import commands
+import discord
 
 from models.ErrorHandler import VoiceError
 from models.SongQueue import SongQueue
@@ -64,8 +65,12 @@ class VoiceState:
                     return
             print("DEGUB - Start playing")
             self.current.source.volume = self._volume
+            print("Playing")
             self.voice.play(self.current.source, after=self.play_next_song)
+            print("Playing")
             await self.current.source.channel.send(embed=self.current.create_embed())
+            streaming = discord.Streaming(name=self.current.source.title, url=("https://www.youtube.com/watch?v=dQw4w9WgXcQ&pp=ygUTcmljayBhc3RsZXkgZ2l2ZSB1cA%3D%3D" if self.current.is_radio or self.current.is_file else self.current.source.url))
+            await self.bot.change_presence(activity=streaming)
 
             await self.next.wait()
 
@@ -85,6 +90,7 @@ class VoiceState:
     async def stop(self):
         self.songs.clear()
         self.dead = True
+        await self.bot.change_presence()
 
         if self.voice:
             await self.voice.disconnect()
