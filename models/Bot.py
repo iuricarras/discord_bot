@@ -71,7 +71,7 @@ class Bot(commands.Bot):
         if re.search("boda", mnsg, re.IGNORECASE):
             await asyncio.sleep(r.randint(1, 60))
             await message.channel.send("O caralho que te foda")
-        if r.randint(1, 200) == 1:
+        if r.randint(1, 400) == 1:
             n = r.randint(1, 10)
             for i in range(0, n):
                 await message.channel.send("Crazy? I was crazy once. They put me in a room. A rubber room. A rubber room with rats. And rats make me crazy.")
@@ -127,7 +127,7 @@ class Bot(commands.Bot):
                time.strptime("22 11", "%d %m"): 753284184818188309  #Claudia
                #time.strptime("12 03", "%d %m"): 601454336245235712 #Yuwi UwU
                #time.strptime("12 03", "%d %m"): 1081282162562703542 #Bot
-               }
+}
 
         aniversariante = 0
         hoje = time.localtime()

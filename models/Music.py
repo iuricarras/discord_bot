@@ -134,23 +134,9 @@ class Music(commands.Cog):
         if not ctx.voice_state.is_playing:
             return await ctx.send('Not playing any music right now...')
 
-        voter = ctx.message.author
-        if voter == ctx.voice_state.current.requester:
-            await ctx.message.add_reaction('🚬')
-            ctx.voice_state.skip()
-
-        elif voter.id not in ctx.voice_state.skip_votes:
-            ctx.voice_state.skip_votes.add(voter.id)
-            total_votes = len(ctx.voice_state.skip_votes)
-
-            if total_votes >= 3:
-                await ctx.message.add_reaction('🚬')
-                ctx.voice_state.skip()
-            else:
-                await ctx.send('Skip vote added, currently at **{}/3**'.format(total_votes))
-
-        else:
-            await ctx.send('You have already voted to skip this song.')
+        await ctx.message.add_reaction('🚬')
+        ctx.voice_state.skip()
+       
 
     @commands.command(name='queue')
     async def _queue(self, ctx: commands.Context, *, page: int = 1):
@@ -226,15 +212,27 @@ class Music(commands.Cog):
                     await ctx.invoke(self._join)
 
                 async with ctx.typing():
-                    try:
-                        source = await YTDLSource.create_source(ctx, search, loop=self.bot.loop, is_radio=False)
-                    except YTDLError as e:
-                        await ctx.send('An error occurred while processing this request: {}'.format(str(e)))
-                    else:
-                        song = Song(source, False, False)
+                    if search.startswith("https://youtube.com/playlist?"):
+                        try:
+                            sources = await YTDLSource.create_source_playlist(ctx, search, loop=self.bot.loop, is_radio=False)
+                        except YTDLError as e:
+                            await ctx.send('An error occurred while processing this request: {}'.format(str(e)))
+                        else:
+                            for source in sources:
+                                song = Song(source, False, False)
 
-                        await ctx.voice_state.songs.put(song)
-                        await ctx.send('No **cu** da bicha {}'.format(str(source)))
+                                await ctx.voice_state.songs.put(song)
+                                await ctx.send('No **cu** da bicha {}'.format(str(source)))
+                    else:       
+                        try:
+                            source = await YTDLSource.create_source(ctx, search, loop=self.bot.loop, is_radio=False)
+                        except YTDLError as e:
+                            await ctx.send('An error occurred while processing this request: {}'.format(str(e)))
+                        else:
+                            song = Song(source, False, False)
+
+                            await ctx.voice_state.songs.put(song)
+                            await ctx.send('No **cu** da bicha {}'.format(str(source)))
 
     @commands.command()
     async def radio(self, ctx, *, name):
