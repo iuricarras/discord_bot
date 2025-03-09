@@ -3,8 +3,8 @@ from async_timeout import timeout
 from discord.ext import commands
 import discord
 
-from models.ErrorHandler import VoiceError
-from models.SongQueue import SongQueue
+from ErrorHandler import VoiceError
+from SongQueue import SongQueue
 
 class VoiceState:
     def __init__(self, bot: commands.Bot, ctx: commands.Context):

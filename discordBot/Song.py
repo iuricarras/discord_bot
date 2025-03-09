@@ -1,6 +1,6 @@
 import discord
 
-from models.YTDLSource import YTDLSource
+from YTDLSource import YTDLSource
 
 
 class Song:

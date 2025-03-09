@@ -1,6 +1,6 @@
 import asyncio
 import discord
-from models.Bot import Bot
+from Bot import Bot
 from discord.ext import commands
 
 async def main():

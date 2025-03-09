@@ -1,8 +1,8 @@
 import discord
 from discord.ext import commands
 from unidecode import unidecode
-from models.Citation import Citation
-from models.Music import Music
+from Citation import Citation
+from Music import Music
 from dotenv import load_dotenv
 import os
 import re

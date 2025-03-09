@@ -2,7 +2,7 @@ import asyncio
 import functools
 import discord
 from discord.ext import commands
-from models.ErrorHandler import YTDLError
+from ErrorHandler import YTDLError
 import yt_dlp as youtube_dl
 from pyradios import RadioBrowser
 

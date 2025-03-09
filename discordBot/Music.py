@@ -2,10 +2,10 @@ import math
 import discord
 from discord.ext import commands
 
-from models.ErrorHandler import VoiceError, YTDLError
-from models.Song import Song
-from models.VoiceState import VoiceState
-from models.YTDLSource import YTDLSource
+from ErrorHandler import VoiceError, YTDLError
+from Song import Song
+from VoiceState import VoiceState
+from YTDLSource import YTDLSource
 
 class Music(commands.Cog):
     def __init__(self, bot: commands.Bot):
