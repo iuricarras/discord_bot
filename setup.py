@@ -10,9 +10,6 @@ setup(
   #author='...',
   #description='...',
   install_requires=install_requires,
-  scripts=[
-    'main.py',
-  ],
   entry_points={
     # example: file some_module.py -> function main
     #'console_scripts': ['someprogram=some_module:main']
