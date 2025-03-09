@@ -4,8 +4,8 @@ with open('requirements.txt') as f:
     install_requires = f.read().splitlines()
 
 setup(
-  name='someprogram',
-  #packages=['someprogram'],
+  name='discordBot',
+  packages=['discordBot'],
   version='0.1.0',
   #author='...',
   #description='...',
