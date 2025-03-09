@@ -21,7 +21,7 @@ class Bot(commands.Bot):
         super().__init__(command_prefix, description=description, intents=intents)
         self.music = None
         self.citaton = None
-        load_dotenv()
+        load_dotenv(os.getenv("DISCORD_CONFIG_PATH"))
 
         self._discordtoken = os.getenv("discord_token")
 
