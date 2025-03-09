@@ -6,5 +6,13 @@ setup(name='discordBot',
       packages=find_packages(),
       # Executables
       scripts=["main.py"],
+      install_requires=[
+        "discord.py",
+        "aiohttp",
+        "unidecode",
+        "yt-dlp",
+        "pyradios",
+        "python-dotenv",
+    ],
       )
 
