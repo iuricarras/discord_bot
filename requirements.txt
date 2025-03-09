@@ -1,0 +1,6 @@
+discord.py
+aiohttp
+unidecode
+yt-dlp
+pyradios
+python-dotenv

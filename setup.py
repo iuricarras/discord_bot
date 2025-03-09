@@ -1,18 +1,20 @@
-from setuptools import setup, find_packages
+from setuptools import setup
 
-setup(name='discordBot',
-      version='1.0',
-      # Modules to import from other scripts:
-      packages=find_packages(),
-      # Executables
-      scripts=["main.py"],
-      install_requires=[
-        "discord.py",
-        "aiohttp",
-        "unidecode",
-        "yt-dlp",
-        "pyradios",
-        "python-dotenv",
-    ],
-      )
+with open('requirements.txt') as f:
+    install_requires = f.read().splitlines()
 
+setup(
+  name='someprogram',
+  #packages=['someprogram'],
+  version='0.1.0',
+  #author='...',
+  #description='...',
+  install_requires=install_requires,
+  scripts=[
+    'main.py',
+  ],
+  entry_points={
+    # example: file some_module.py -> function main
+    #'console_scripts': ['someprogram=some_module:main']
+  },
+)
