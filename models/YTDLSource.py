@@ -103,8 +103,8 @@ class YTDLSource(discord.PCMVolumeTransformer):
 
                 if process_info is None:
                     raise YTDLError('Couldn\'t find anything that matches `{}`'.format(search))
-
-            webpage_url = process_info['url']
+                
+            webpage_url = process_info['webpage_url']
             partial = functools.partial(cls.ytdl.extract_info, webpage_url, download=False)
             processed_info = await loop.run_in_executor(None, partial)
 
@@ -186,6 +186,7 @@ class YTDLSource(discord.PCMVolumeTransformer):
                 music = cls(ctx, discord.FFmpegPCMAudio(info['url'], **cls.FFMPEG_OPTIONS), data=info, is_radio=False)    
                 musics.add(music)    
 
+            print(musics)
             return musics
 
     @staticmethod

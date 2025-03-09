@@ -212,7 +212,7 @@ class Music(commands.Cog):
                     await ctx.invoke(self._join)
 
                 async with ctx.typing():
-                    if search.startswith("https://youtube.com/playlist?"):
+                    if search.startswith("https://www.youtube.com/playlist?"):
                         try:
                             sources = await YTDLSource.create_source_playlist(ctx, search, loop=self.bot.loop, is_radio=False)
                         except YTDLError as e:
