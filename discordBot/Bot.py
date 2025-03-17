@@ -21,9 +21,10 @@ class Bot(commands.Bot):
         super().__init__(command_prefix, description=description, intents=intents)
         self.music = None
         self.citaton = None
-        load_dotenv(os.getenv("DISCORD_CONFIG_PATH"))
+        file = open(os.getenv("DISCORD_CONFIG_PATH"), "r")
 
-        self._discordtoken = os.getenv("discord_token")
+        self._discordtoken = file.readline()
+        file.close()
 
     async def on_ready(self):
         global server
