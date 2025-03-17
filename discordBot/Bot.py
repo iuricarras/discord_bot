@@ -21,7 +21,7 @@ class Bot(commands.Bot):
         super().__init__(command_prefix, description=description, intents=intents)
         self.music = None
         self.citaton = None
-        file = open(os.getenv("DISCORD_CONFIG_PATH"), "r")
+        file = open(os.getenv("DISCORD_TOKEN_PATH"), "r")
 
         self._discordtoken = file.readline()
         file.close()
