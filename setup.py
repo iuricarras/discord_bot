@@ -13,6 +13,5 @@ setup(
   py_modules=["Bot","Citation","ErrorHandler","Music","Song","SongQueue","VoiceState","YTDLSource" ],
   entry_points={
     # example: file some_module.py -> function main
-    #'console_scripts': ['someprogram=some_module:main']
   },
 )
