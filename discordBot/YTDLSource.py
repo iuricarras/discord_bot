@@ -15,16 +15,13 @@ youtube_dl.utils.bug_reports_message = _bug_reports_message
 class YTDLSource(discord.PCMVolumeTransformer):
     YTDL_OPTIONS = {
         'format': 'bestaudio/best',
-        'extractaudio': True,
-        'audioformat': 'mp3',
-        'outtmpl': '%(extractor)s-%(id)s-%(title)s.%(ext)s',
+        'quiet': True,
+        'no_warnings': True,
         'restrictfilenames': True,
+        'outtmpl': '%(uploader)s-%(title)s.%(ext)s',
         'noplaylist': True,
         'nocheckcertificate': True,
         'ignoreerrors': False,
-        'logtostderr': False,
-        'quiet': True,
-        'no_warnings': True,
         'default_search': 'auto',
         'source_address': '0.0.0.0',
     }
