@@ -9,7 +9,6 @@ import re
 import asyncio
 import random as r
 import time
-import ffmpeg
 
 server = discord.Guild
 iuriRole = 0
@@ -33,8 +32,7 @@ class Bot(commands.Bot):
         global iuriRole
         global sala
         global CdTP
-        #server = self.get_guild(464180049327947787)
-        server = self.get_guild(1127149101809664020)
+        server = self.get_guild(464180049327947787)
         iuriRole = server.get_role(476152428161662993)
         sala = server.get_channel(1079476335841378395)
         CdTP = server.get_channel(538134492838363171)
