@@ -6,7 +6,11 @@ from ErrorHandler import YTDLError
 import yt_dlp as youtube_dl
 from pyradios import RadioBrowser
 
-youtube_dl.utils.bug_reports_message = lambda: ''
+def _bug_reports_message(before=';'):
+    # keep the default message yt_dlp expects; accept the optional 'before' kwarg
+    return ''
+
+youtube_dl.utils.bug_reports_message = _bug_reports_message
 
 class YTDLSource(discord.PCMVolumeTransformer):
     YTDL_OPTIONS = {

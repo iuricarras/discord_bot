@@ -9,6 +9,7 @@ import re
 import asyncio
 import random as r
 import time
+import ffmpeg
 
 server = discord.Guild
 iuriRole = 0
@@ -21,17 +22,20 @@ class Bot(commands.Bot):
         super().__init__(command_prefix, description=description, intents=intents)
         self.music = None
         self.citaton = None
-        file = open(os.getenv("DISCORD_TOKEN_PATH"), "r")
+        #file = open(os.getenv("DISCORD_TOKEN_PATH"), "r")
 
-        self._discordtoken = file.readline()
-        file.close()
+        #self._discordtoken = file.readline()
+        #file.close()
+        load_dotenv()
+        self._discordtoken = os.getenv("DISCORD_TOKEN")
 
     async def on_ready(self):
         global server
         global iuriRole
         global sala
         global CdTP
-        server = self.get_guild(464180049327947787)
+        #server = self.get_guild(464180049327947787)
+        server = self.get_guild(1127149101809664020)
         iuriRole = server.get_role(476152428161662993)
         sala = server.get_channel(1079476335841378395)
         CdTP = server.get_channel(538134492838363171)
@@ -159,7 +163,7 @@ class Bot(commands.Bot):
                 voice = await channel.connect()
                 i = r.randint(1,2)
                 duration = [60, 20]
-                music = "/home/anna/sites/discord/assets/audio/music_anv_" + str(i) + ".mp3"
+                music = "/home/gaia/discord/discordBot/assets/audio/music_anv_" + str(i) + ".mp3"
                 source = discord.PCMVolumeTransformer(discord.FFmpegPCMAudio(music))
                 voice.play(source)
                 await asyncio.sleep(duration[i-1])

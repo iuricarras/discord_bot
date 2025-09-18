@@ -2,6 +2,7 @@ import asyncio
 import discord
 from Bot import Bot
 from discord.ext import commands
+import ffmpeg
 
 async def main():
     perms = discord.Permissions.general()
