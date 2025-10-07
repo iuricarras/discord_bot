@@ -7,26 +7,16 @@ class Citation(commands.Cog):
         self.bot = bot
         self.citation_channel = None
 
-        r.seed(1298347892)
-        n = 10
+        r.seed(8978979817897)
+        n = 14
         secretsantaArray = list(range(n))
         for i in range(n - 1):
             j = r.randrange(i + 1, n)
             secretsantaArray[i], secretsantaArray[j] = secretsantaArray[j], secretsantaArray[i]
 
-        if any(secretsantaArray[i] == i for i in range(n)):
-            attempts = 0
-            while True:
-                r.shuffle(secretsantaArray)
-                attempts += 1
-                if all(secretsantaArray[i] != i for i in range(n)):
-                    break
-                if attempts > 1000:
-                    raise RuntimeError("ERROR: unable to generate derangement after many attempts")
-
         self.secretsantaArray = secretsantaArray
         print(self.secretsantaArray)
-        self.listUsers = [330033175881318401, 308697718006480908, 503693859767713792, 210832481316765706, 1064133004496216064, 464176034627977216, 210831222677438465, 365586199231987722, 753284184818188309, 574697874969853968]
+        self.listUsers = [330033175881318401, 308697718006480908, 503693859767713792, 210832481316765706, 1064133004496216064, 464176034627977216, 210831222677438465, 365586199231987722, 753284184818188309, 574697874969853968, 1238182201645076571, 511541066579705886, 500413902278885382, 296337477638029322]
 
 
     def add_channel(self, server):
