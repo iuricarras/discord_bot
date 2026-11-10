@@ -18,7 +18,6 @@ class YTDLSource(discord.PCMVolumeTransformer):
         'quiet': True,
         'no_warnings': True,
         'restrictfilenames': True,
-        'outtmpl': '%(uploader)s-%(title)s.%(ext)s',
         'noplaylist': True,
         'nocheckcertificate': True,
         'ignoreerrors': False,
@@ -48,7 +47,10 @@ class YTDLSource(discord.PCMVolumeTransformer):
         self.thumbnail = data.get('thumbnail')
         if not is_radio:
             date = data.get('upload_date')
-            self.upload_date = date[6:8] + '.' + date[4:6] + '.' + date[0:4]
+            if date and len(date) >= 8:
+                self.upload_date = date[6:8] + '.' + date[4:6] + '.' + date[0:4]
+            else:
+                self.upload_date = 'Unknown'
             self.description = data.get('description')
             self.duration = self.parse_duration(int(data.get('duration')))
             self.tags = data.get('tags')
@@ -86,10 +88,13 @@ class YTDLSource(discord.PCMVolumeTransformer):
             return cls(ctx, discord.FFmpegPCMAudio(radio['url'], **cls.FFMPEG_OPTIONS), data=radio, is_radio=True)
         else:
             loop = loop or asyncio.get_event_loop()
-
-            partial = functools.partial(cls.ytdl.extract_info, search, download=False, process=False)
-            data = await loop.run_in_executor(None, partial)
-
+            print("henlo 1")
+            try:
+                partial = functools.partial(cls.ytdl.extract_info, search, download=False, process=False)
+                data = await loop.run_in_executor(None, partial)
+            except Exception as e:
+                raise YTDLError(f'Error searching for `{search}`: {str(e)}')
+            print("henlo 2")
             if data is None:
                 raise YTDLError('Couldn\'t find anything that matches `{}`'.format(search))
 
@@ -104,13 +109,23 @@ class YTDLSource(discord.PCMVolumeTransformer):
 
                 if process_info is None:
                     raise YTDLError('Couldn\'t find anything that matches `{}`'.format(search))
-                
+            
             webpage_url = process_info['webpage_url']
-            partial = functools.partial(cls.ytdl.extract_info, webpage_url, download=False)
-            processed_info = await loop.run_in_executor(None, partial)
+            print("henlo 3")
+            # Validate that webpage_url exists and is not empty
+            if not webpage_url:
+                raise YTDLError(f'Invalid webpage_url: `{webpage_url}`')
+
+            print(f"Processing webpage_url: {webpage_url}")  # Debugging log
+
+            try:
+                partial = functools.partial(cls.ytdl.extract_info, webpage_url, download=False)
+                processed_info = await loop.run_in_executor(None, partial)
+            except Exception as e:
+                raise YTDLError(f'Error fetching `{webpage_url}`: {str(e)}')
 
             if processed_info is None:
-                raise YTDLError('Couldn\'t fetch `{}`'.format(webpage_url))
+                raise YTDLError(f'Couldn\'t fetch `{webpage_url}`')
 
             if 'entries' not in processed_info:
                 info = processed_info
@@ -150,8 +165,11 @@ class YTDLSource(discord.PCMVolumeTransformer):
         else:
             loop = loop or asyncio.get_event_loop()
 
-            partial = functools.partial(cls.ytdl.extract_info, search, download=False, process=False)
-            data = await loop.run_in_executor(None, partial)
+            try:
+                partial = functools.partial(cls.ytdl.extract_info, search, download=False, process=False)
+                data = await loop.run_in_executor(None, partial)
+            except Exception as e:
+                raise YTDLError(f'Error searching for `{search}`: {str(e)}')
 
             if data is None:
                 raise YTDLError('Couldn\'t find anything that matches `{}`'.format(search))
@@ -168,8 +186,12 @@ class YTDLSource(discord.PCMVolumeTransformer):
             for process in process_info:
                 print(process)
                 webpage_url = process
-                partial = functools.partial(cls.ytdl.extract_info, webpage_url, download=False)
-                processed_info = await loop.run_in_executor(None, partial)
+                try:
+                    partial = functools.partial(cls.ytdl.extract_info, webpage_url, download=False)
+                    processed_info = await loop.run_in_executor(None, partial)
+                except Exception as e:
+                    print(f"Error fetching {webpage_url}: {str(e)}")
+                    continue
 
                 if processed_info is None:
                     raise YTDLError('Couldn\'t fetch `{}`'.format(webpage_url))

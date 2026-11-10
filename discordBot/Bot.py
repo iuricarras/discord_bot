@@ -25,6 +25,7 @@ class Bot(commands.Bot):
 
         self._discordtoken = file.readline()
         file.close()
+        
 
 
     async def on_ready(self):

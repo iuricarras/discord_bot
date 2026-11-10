@@ -7,8 +7,13 @@ class Citation(commands.Cog):
         self.bot = bot
         self.citation_channel = None
 
-        r.seed(8978979817897)
-        n = 14
+        #r.seed(8978979817897)
+        #n = 14
+
+        # Mariana -> Fabio -> Braulio -> Gonçalo -> Andre -> Diogo -> Claudia -> Ramos    Rodrigo -> Ruben -> Dias -> Nena -> Iuri
+
+        r.seed(85489489175683418556)
+        n = 12
         secretsantaArray = list(range(n))
         for i in range(n - 1):
             j = r.randrange(i + 1, n)
@@ -16,7 +21,7 @@ class Citation(commands.Cog):
 
         self.secretsantaArray = secretsantaArray
         print(self.secretsantaArray)
-        self.listUsers = [330033175881318401, 308697718006480908, 503693859767713792, 210832481316765706, 1064133004496216064, 464176034627977216, 210831222677438465, 365586199231987722, 753284184818188309, 574697874969853968, 1238182201645076571, 511541066579705886, 500413902278885382, 296337477638029322]
+        self.listUsers = [330033175881318401, 308697718006480908, 503693859767713792, 210832481316765706, 1064133004496216064, 464176034627977216, 365586199231987722, 753284184818188309, 1238182201645076571, 511541066579705886, 500413902278885382, 296337477638029322]
 
 
     def add_channel(self, server):
